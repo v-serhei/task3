@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- monitor interval = 1 day -->
+<Configuration status="INFO" monitorInterval="86400">>
+    <Properties>
+        <property name="consoleLogPattern">
+            %d{yyyy-MM-dd HH:mm:ss} [%-5level] [%t] : %msg%n
+        </property>
+        <property name="fileLogPattern">
+            %d{ISO8601} [%-5level] [%t] %logger{5} %L: %msg%n
+        </property>
+    </Properties>
+    <Appenders>
+        <Console name="Console">
+            <PatternLayout pattern="${consoleLogPattern}"/>
+        </Console>
+        <RollingFile name="TextFile"
+                     filename="logs/logfile.txt"
+                     filePattern="logs/logfile-%d{yyyy-MM-dd}-%i.txt"
+                     bufferedIO="true">
+            <PatternLayout pattern="${fileLogPattern}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10 kB"/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="DEBUG">
+            <AppenderRef ref="Console" level="INFO"/>
+            <AppenderRef ref="TextFile" level="DEBUG"/>
+        </Root>
+    </Loggers>
+</Configuration>
