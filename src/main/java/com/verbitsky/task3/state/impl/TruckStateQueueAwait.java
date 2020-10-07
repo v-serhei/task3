@@ -7,13 +7,13 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class TruckQueue implements TruckState {
+public class TruckStateQueueAwait implements TruckState {
     private static final String QUEUE_STATE = "awaitTerminalQueue";
     private static Logger logger = LogManager.getLogger();
 
     private final Truck truck;
 
-    public TruckQueue(Truck truck) {
+    public TruckStateQueueAwait(Truck truck) {
         this.truck = truck;
     }
 
@@ -33,7 +33,7 @@ public class TruckQueue implements TruckState {
     @Override
     public void followToTruckBase() {
         logger.log(Level.INFO, truck.toString().concat(" got permission to loading/unloading process"));
-        truck.setState(new TruckBaseProcessing(truck));
+        truck.setState(new TruckStateBaseProcessing(truck));
         logger.log(Level.INFO, truck.toString().concat(" is in loading/unloading process"));
         //emulate loading/unloading process
         ProcessEmulator.emulateProcessingOperation();

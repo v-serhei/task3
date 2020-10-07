@@ -1,4 +1,4 @@
-package com.verbitsky.task3.truckCreator;
+package com.verbitsky.task3.truckcreator;
 
 import com.verbitsky.task3.entity.Truck;
 import com.verbitsky.task3.entity.TruckType;

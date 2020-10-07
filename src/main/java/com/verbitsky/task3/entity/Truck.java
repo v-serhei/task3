@@ -1,8 +1,8 @@
 package com.verbitsky.task3.entity;
 
 import com.verbitsky.task3.state.TruckState;
-import com.verbitsky.task3.state.impl.Creation;
-import com.verbitsky.task3.truckExcpetion.TruckException;
+import com.verbitsky.task3.state.impl.TruckStateCreation;
+import com.verbitsky.task3.truckexception.TruckException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +23,7 @@ public class Truck extends Thread implements Comparable<Truck> {
     public Truck(String name, TruckType type) {
         setTruckName(name);
         setType(type);
-        currentState = new Creation(this);
+        currentState = new TruckStateCreation(this);
         currentState.createNewTruck();
         queueNumber = 0;
         truckLock = new ReentrantLock();

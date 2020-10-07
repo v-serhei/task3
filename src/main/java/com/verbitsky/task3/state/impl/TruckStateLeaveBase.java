@@ -6,12 +6,12 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class LeaveBase implements TruckState {
+public class TruckStateLeaveBase implements TruckState {
     private static final String LEAVING_BASE_STATE = "Left truck-base";
     private static Logger logger = LogManager.getLogger();
     private final Truck truck;
 
-    public LeaveBase(Truck truck) {
+    public TruckStateLeaveBase(Truck truck) {
         this.truck = truck;
     }
 

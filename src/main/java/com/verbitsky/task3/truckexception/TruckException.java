@@ -1,4 +1,4 @@
-package com.verbitsky.task3.truckExcpetion;
+package com.verbitsky.task3.truckexception;
 
 public class TruckException extends Exception {
     public TruckException() {

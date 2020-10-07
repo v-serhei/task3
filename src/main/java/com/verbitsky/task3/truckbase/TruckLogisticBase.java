@@ -1,33 +1,28 @@
-package com.verbitsky.task3.truckBase;
+package com.verbitsky.task3.truckbase;
 
 import com.verbitsky.task3.entity.Truck;
-import com.verbitsky.task3.state.impl.Creation;
-import com.verbitsky.task3.state.impl.LeaveBase;
-import com.verbitsky.task3.state.impl.TruckQueue;
-import com.verbitsky.task3.truckExcpetion.TruckException;
+import com.verbitsky.task3.state.impl.TruckStateCreation;
+import com.verbitsky.task3.state.impl.TruckStateLeaveBase;
+import com.verbitsky.task3.state.impl.TruckStateQueueAwait;
+import com.verbitsky.task3.truckexception.TruckException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
-public enum TruckBase {
+public enum TruckLogisticBase {
     INSTANCE;
     private static Logger logger = LogManager.getLogger();
     private static final int MAX_TRUCK_PROCESSING_COUNT = 3;
-    private static Semaphore semaphore = new Semaphore(MAX_TRUCK_PROCESSING_COUNT);
-    private static Queue<Truck> queue = new PriorityQueue<>();
-    private static Lock baseLocker = new ReentrantLock();
-    private static AtomicInteger queueNumber = new AtomicInteger(0);
-    private static AtomicInteger processedTrucksCount = new AtomicInteger(0);
+    private Semaphore semaphore = new Semaphore(MAX_TRUCK_PROCESSING_COUNT);
+    private TruckQueue<Truck> queue = new TruckQueue<>();
+    private AtomicInteger queueNumber = new AtomicInteger(0);
+    private AtomicInteger processedTrucksCount = new AtomicInteger(0);
 
 
-    public static AtomicInteger getProcessedTrucksCount() {
+    public AtomicInteger getProcessedTrucksCount() {
         return processedTrucksCount;
     }
 
@@ -36,18 +31,16 @@ public enum TruckBase {
             throw new TruckException("requestTruckProcessingPermission calling with Null");
         }
         //if truck not null and truck state matching Creation state - add it to queue
-        if (truck.getCurrentState() instanceof Creation) {
+        if (truck.getCurrentState() instanceof TruckStateCreation) {
             try {
-                baseLocker.lock();
                 truck.setQueueNumber(queueNumber.incrementAndGet());
                 queue.offer(truck);
-                truck.setState(new TruckQueue(truck));
+                truck.setState(new TruckStateQueueAwait(truck));
                 truck.getTruckLock().lock();
                 truck.getWorkingCondition().await();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } finally {
-                baseLocker.unlock();
                 truck.getTruckLock().unlock();
             }
         } else {
@@ -79,7 +72,7 @@ public enum TruckBase {
 
     public void releaseProcessingPermission(Truck truck) {
         semaphore.release();
-        truck.setState(new LeaveBase(truck));
+        truck.setState(new TruckStateLeaveBase(truck));
         processedTrucksCount.getAndIncrement();
     }
 }

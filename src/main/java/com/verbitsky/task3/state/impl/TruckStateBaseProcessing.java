@@ -2,18 +2,18 @@ package com.verbitsky.task3.state.impl;
 
 import com.verbitsky.task3.entity.Truck;
 import com.verbitsky.task3.state.TruckState;
-import com.verbitsky.task3.truckBase.TruckBase;
+import com.verbitsky.task3.truckbase.TruckLogisticBase;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class TruckBaseProcessing implements TruckState {
+public class TruckStateBaseProcessing implements TruckState {
     private static final String BASE_PROCESSING_STATE = "Await truck-base processing";
     private static Logger logger = LogManager.getLogger();
 
     private final Truck truck;
 
-    public TruckBaseProcessing(Truck truck) {
+    public TruckStateBaseProcessing(Truck truck) {
         this.truck = truck;
     }
 
@@ -38,7 +38,7 @@ public class TruckBaseProcessing implements TruckState {
     @Override
     public void leaveBase() {
         logger.log(Level.INFO, truck.toString().concat(" finished loading/unloading process and leaving base"));
-        TruckBase.INSTANCE.releaseProcessingPermission(truck);
+        TruckLogisticBase.INSTANCE.releaseProcessingPermission(truck);
     }
 
     @Override

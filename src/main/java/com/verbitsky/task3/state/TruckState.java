@@ -1,6 +1,6 @@
 package com.verbitsky.task3.state;
 
-import com.verbitsky.task3.truckExcpetion.TruckException;
+import com.verbitsky.task3.truckexception.TruckException;
 
 public interface TruckState {
     void createNewTruck();

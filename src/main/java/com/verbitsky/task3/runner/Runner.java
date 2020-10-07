@@ -1,8 +1,8 @@
 package com.verbitsky.task3.runner;
 
 import com.verbitsky.task3.entity.Truck;
-import com.verbitsky.task3.truckBase.TruckBase;
-import com.verbitsky.task3.truckCreator.TruckCreator;
+import com.verbitsky.task3.truckbase.TruckLogisticBase;
+import com.verbitsky.task3.truckcreator.TruckCreator;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,13 +20,13 @@ public class Runner {
         logger.log(Level.INFO, "Start emulation\n\n");
         List<Truck> truckList = TruckCreator.createRandomTypeTrucks(TRUCK_COUNT);
         truckList.forEach(Thread::start);
-        while (TruckBase.getProcessedTrucksCount().get() < TRUCK_COUNT) {
+        while (TruckLogisticBase.INSTANCE.getProcessedTrucksCount().get() < TRUCK_COUNT) {
             try {
                 TimeUnit.MILLISECONDS.sleep(DEFAULT_PROCESSING_INTERVAL);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            TruckBase.INSTANCE.processQueue();
+            TruckLogisticBase.INSTANCE.processQueue();
         }
         try {
             TimeUnit.MILLISECONDS.sleep(DEFAULT_AWAIT_TIME);
