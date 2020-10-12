@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 public class TruckStateQueueAwait implements TruckState {
     private static final String QUEUE_STATE = "awaitTerminalQueue";
     private static Logger logger = LogManager.getLogger();
-
     private final Truck truck;
 
     public TruckStateQueueAwait(Truck truck) {
@@ -28,7 +27,6 @@ public class TruckStateQueueAwait implements TruckState {
         logger.log(Level.FATAL, "Invoke unsupported operation (follow to truck queue) in TruckQueue State");
         throw new UnsupportedOperationException("This operation unsupported with current state");
     }
-
 
     @Override
     public void followToTruckBase() {

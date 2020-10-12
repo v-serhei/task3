@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 public class TruckStateBaseProcessing implements TruckState {
     private static final String BASE_PROCESSING_STATE = "Await truck-base processing";
     private static Logger logger = LogManager.getLogger();
-
     private final Truck truck;
 
     public TruckStateBaseProcessing(Truck truck) {

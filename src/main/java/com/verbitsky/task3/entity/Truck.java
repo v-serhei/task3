@@ -89,7 +89,6 @@ public class Truck extends Thread implements Comparable<Truck> {
         } catch (TruckException | InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override

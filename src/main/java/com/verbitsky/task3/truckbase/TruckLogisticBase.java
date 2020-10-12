@@ -14,19 +14,42 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public enum TruckLogisticBase {
     INSTANCE;
-    private static Logger logger = LogManager.getLogger();
-    private static final int MAX_TRUCK_PROCESSING_COUNT = 3;
-    private Semaphore semaphore = new Semaphore(MAX_TRUCK_PROCESSING_COUNT);
-    private TruckQueue<Truck> queue = new TruckQueue<>();
-    private AtomicInteger queueNumber = new AtomicInteger(0);
-    private AtomicInteger processedTrucksCount = new AtomicInteger(0);
 
+    private static final String MAX_PROCESSING_TRUCK_COUNT = "max.processing.truck.count";
+    private static final String PROPERTY_FILE = "data/logisticBaseSettings.properties";
+    private static Logger logger = LogManager.getLogger();
+    private Semaphore semaphore;
+    private TruckQueue<Truck> queue;
+    private AtomicInteger queueNumber;
+    private AtomicInteger processedTrucksCount;
+    private boolean isInit = false;
+
+    public void init ()    {
+        TruckBasePropertyManager propertyManager = TruckBasePropertyManager.INSTANCE;
+        try {
+            propertyManager.initManager(PROPERTY_FILE);
+        } catch (TruckException e) {
+            logger.log(Level.FATAL, "Error property manager initialization");
+            throw new RuntimeException("Error property manager initialization", e);
+        }
+        int maxTruckProcessingCount = propertyManager
+                .getIntProperty(MAX_PROCESSING_TRUCK_COUNT)
+                .orElseThrow(() -> new RuntimeException("Error to get property 'max.processing.truck.count'"));
+        queueNumber = new AtomicInteger(0);
+        processedTrucksCount = new AtomicInteger(0);
+        queue = new TruckQueue<>();
+        semaphore =new Semaphore(maxTruckProcessingCount);
+        isInit = true;
+    }
 
     public AtomicInteger getProcessedTrucksCount() {
         return processedTrucksCount;
     }
 
     public void requestProcessingPermission(Truck truck) throws TruckException {
+        if (!isInit) {
+            init();
+        }
         if (truck == null) {
             throw new TruckException("requestTruckProcessingPermission calling with Null");
         }
@@ -50,7 +73,10 @@ public enum TruckLogisticBase {
     }
 
     public void processQueue() {
-        //взять разрешение а если нет - слипнуть поток
+        if (!isInit) {
+            init();
+        }
+        //take permission if exist free
         Truck truck = null;
         try {
             if (semaphore.tryAcquire()) {
@@ -71,6 +97,9 @@ public enum TruckLogisticBase {
     }
 
     public void releaseProcessingPermission(Truck truck) {
+        if (!isInit) {
+            init();
+        }
         semaphore.release();
         truck.setState(new TruckStateLeaveBase(truck));
         processedTrucksCount.getAndIncrement();
